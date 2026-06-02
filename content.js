@@ -140,8 +140,6 @@
     text.innerText = msg;
     t.appendChild(text);
 
-    let autoHide;
-
     if (withRefresh) {
       const btn = document.createElement('button');
       btn.innerText = 'Refresh';
@@ -180,7 +178,7 @@
       setTimeout(() => t.remove(), 300);
     };
 
-    autoHide = setTimeout(hide, withRefresh ? 8000 : 3500);
+    setTimeout(hide, withRefresh ? 8000 : 3500);
   }
 
   // --- API ---
@@ -217,20 +215,22 @@
   }
 
   async function deleteBlocks(blockIds, spaceId, userId, onProgress) {
-    let deleted = 0;
-    for (const blockId of blockIds) {
-      const resp = await fetch('https://app.notion.com/api/v3/deleteBlocks', {
-        method: 'POST', mode: 'cors', credentials: 'include',
-        referrerPolicy: 'strict-origin-when-cross-origin',
-        headers: {
-          accept: '*/*', 'cache-control': 'no-cache', 'content-type': 'application/json',
-          'x-notion-active-user-header': userId,
-        },
-        body: JSON.stringify({ blocks: [{ id: blockId, spaceId }], permanentlyDelete: true }),
-      });
-      if (resp.ok) { deleted++; onProgress(deleted); }
-    }
-    return deleted;
+    // Send all IDs in a single API call — the endpoint accepts an array
+    const resp = await fetch('https://app.notion.com/api/v3/deleteBlocks', {
+      method: 'POST', mode: 'cors', credentials: 'include',
+      referrerPolicy: 'strict-origin-when-cross-origin',
+      headers: {
+        accept: '*/*', 'cache-control': 'no-cache', 'content-type': 'application/json',
+        'x-notion-active-user-header': userId,
+      },
+      body: JSON.stringify({
+        blocks: blockIds.map(id => ({ id, spaceId })),
+        permanentlyDelete: true,
+      }),
+    });
+    const count = resp.ok ? blockIds.length : 0;
+    onProgress(count);
+    return count;
   }
 
   // --- MAIN HANDLER ---
@@ -271,7 +271,8 @@
         });
         totalDeleted += batchDeleted;
 
-        if (batchIds.length < 1000) break;
+        // Stop if last batch wasn't full, or if nothing was deleted (all forbidden)
+        if (batchIds.length < 1000 || batchDeleted === 0) break;
         batchIds = await getBlockIds(spaceId);
       }
 
@@ -342,7 +343,21 @@
     });
   }
 
-  const observer = new MutationObserver(tryInject);
+  const observer = new MutationObserver(() => {
+    tryInject();
+    // Disconnect once button is in the DOM — reconnect only if it disappears
+    if (document.getElementById('ntc-inline-btn')) {
+      observer.disconnect();
+      // Watch for the button being removed (panel closed) to re-arm injection
+      const removalWatcher = new MutationObserver(() => {
+        if (!document.getElementById('ntc-inline-btn')) {
+          removalWatcher.disconnect();
+          observer.observe(document.body, { childList: true, subtree: true });
+        }
+      });
+      removalWatcher.observe(document.body, { childList: true, subtree: true });
+    }
+  });
   observer.observe(document.body, { childList: true, subtree: true });
   tryInject();
 

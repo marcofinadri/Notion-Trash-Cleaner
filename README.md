@@ -43,7 +43,7 @@ The extension injects a content script on `app.notion.com`. When the Trash panel
 
 ## Limitations
 
-- Works on **app.notion.com only** (not the desktop app)
+- Works on **app.notion.com** and **\*.notion.so** (not the desktop app)
 - Only top-level pages are targeted; child blocks are deleted by cascade when their parent is removed
 - Pages in shared workspaces where you don't have edit permissions are skipped silently
 - If you navigate away during deletion, the operation continues in the background and a toast appears when done

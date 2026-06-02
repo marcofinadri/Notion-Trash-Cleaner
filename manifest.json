@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Notion Trash Cleaner",
-  "version": "1.0.2",
-  "description": "Permanently delete all pages in your Notion trash with one click. Supports app.notion.com.",
+  "version": "1.0.3",
+  "description": "Permanently delete all pages in your Notion trash with one click. Supports app.notion.com and notion.so.",
   "permissions": ["scripting", "activeTab"],
-  "host_permissions": ["https://app.notion.com/*"],
+  "host_permissions": ["https://app.notion.com/*", "https://*.notion.so/*"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -22,7 +22,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://app.notion.com/*"],
+      "matches": ["https://app.notion.com/*", "https://*.notion.so/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }

@@ -1,0 +1,23 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "Supprimez définitivement toutes les pages de la corbeille Notion en un clic." },
+
+  "emptyTrash":           { "message": "Vider la corbeille" },
+  "deletionInProgress":   { "message": "Suppression en cours…" },
+  "trashAlreadyEmpty":    { "message": "La corbeille est déjà vide" },
+  "confirmDelete":        { "message": "Supprimer définitivement tous les éléments de la corbeille ?\n\nCette action est irréversible." },
+  "oneItemDeleted":       { "message": "1 élément supprimé — Actualisez pour voir les changements" },
+  "manyItemsDeleted":     { "message": "$COUNT$ éléments supprimés — Actualisez pour voir les changements",
+                            "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "Actualiser" },
+  "errorMsg":             { "message": "Erreur — vérifiez la console" },
+
+  "popupDescription":     { "message": "Supprimez définitivement toutes les pages de la corbeille Notion en un clic." },
+  "popupStep1":           { "message": "Ouvrez app.notion.com dans votre navigateur" },
+  "popupStep2":           { "message": "Ouvrez le panneau Corbeille depuis la barre latérale" },
+  "popupStep3":           { "message": "Cliquez sur Vider la corbeille dans la barre de filtres et confirmez" },
+  "popupOpenNotion":      { "message": "Ouvrir Notion →" },
+  "popupNote1":           { "message": "Fonctionne sur app.notion.com et *.notion.so" },
+  "popupNote2":           { "message": "Gère n’importe quel nombre d’éléments" },
+  "popupNote3":           { "message": "L’action est irréversible" }
+}

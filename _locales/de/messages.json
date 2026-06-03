@@ -1,0 +1,23 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "Lösche alle Seiten im Notion-Papierkorb dauerhaft mit einem Klick." },
+
+  "emptyTrash":           { "message": "Papierkorb leeren" },
+  "deletionInProgress":   { "message": "Wird gelöscht…" },
+  "trashAlreadyEmpty":    { "message": "Der Papierkorb ist bereits leer" },
+  "confirmDelete":        { "message": "Alle Elemente im Papierkorb dauerhaft löschen?\n\nDiese Aktion kann nicht rückgängig gemacht werden." },
+  "oneItemDeleted":       { "message": "1 Element gelöscht — Seite neu laden, um Änderungen zu sehen" },
+  "manyItemsDeleted":     { "message": "$COUNT$ Elemente gelöscht — Seite neu laden, um Änderungen zu sehen",
+                            "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "Neu laden" },
+  "errorMsg":             { "message": "Fehler — Konsole prüfen" },
+
+  "popupDescription":     { "message": "Lösche alle Seiten im Notion-Papierkorb dauerhaft mit einem Klick." },
+  "popupStep1":           { "message": "Öffne app.notion.com im Browser" },
+  "popupStep2":           { "message": "Öffne das Papierkorb-Panel in der Seitenleiste" },
+  "popupStep3":           { "message": "Klicke auf Papierkorb leeren in der Filterleiste und bestätige" },
+  "popupOpenNotion":      { "message": "Notion öffnen →" },
+  "popupNote1":           { "message": "Funktioniert auf app.notion.com und *.notion.so" },
+  "popupNote2":           { "message": "Unterstützt beliebig viele Elemente" },
+  "popupNote3":           { "message": "Die Aktion ist unwiderruflich" }
+}

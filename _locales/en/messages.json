@@ -1,0 +1,23 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "Permanently delete all pages in your Notion trash with one click. Supports app.notion.com and notion.so." },
+
+  "emptyTrash":           { "message": "Empty trash" },
+  "deletionInProgress":   { "message": "Deletion in progress…" },
+  "trashAlreadyEmpty":    { "message": "Trash is already empty" },
+  "confirmDelete":        { "message": "Permanently delete all items from trash?\n\nThis cannot be undone." },
+  "oneItemDeleted":       { "message": "1 item deleted — Refresh to see changes" },
+  "manyItemsDeleted":     { "message": "$COUNT$ items deleted — Refresh to see changes",
+                            "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "Refresh" },
+  "errorMsg":             { "message": "Error — check console" },
+
+  "popupDescription":     { "message": "Permanently deletes all pages in your Notion trash in one click." },
+  "popupStep1":           { "message": "Open app.notion.com in your browser" },
+  "popupStep2":           { "message": "Open the Trash panel from the sidebar" },
+  "popupStep3":           { "message": "Click Empty trash in the filter bar, then confirm" },
+  "popupOpenNotion":      { "message": "Open Notion →" },
+  "popupNote1":           { "message": "Works on app.notion.com and *.notion.so" },
+  "popupNote2":           { "message": "Handles any number of trashed items" },
+  "popupNote3":           { "message": "Action is irreversible" }
+}

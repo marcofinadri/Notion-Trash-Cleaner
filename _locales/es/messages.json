@@ -1,0 +1,23 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "Elimina permanentemente todas las páginas de la papelera de Notion con un clic." },
+
+  "emptyTrash":           { "message": "Vaciar papelera" },
+  "deletionInProgress":   { "message": "Eliminando…" },
+  "trashAlreadyEmpty":    { "message": "La papelera ya está vacía" },
+  "confirmDelete":        { "message": "¿Eliminar permanentemente todos los elementos de la papelera?\n\nEsta acción es irreversible." },
+  "oneItemDeleted":       { "message": "1 elemento eliminado — Actualiza para ver los cambios" },
+  "manyItemsDeleted":     { "message": "$COUNT$ elementos eliminados — Actualiza para ver los cambios",
+                            "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "Actualizar" },
+  "errorMsg":             { "message": "Error — revisa la consola" },
+
+  "popupDescription":     { "message": "Elimina permanentemente todas las páginas de la papelera de Notion con un clic." },
+  "popupStep1":           { "message": "Abre app.notion.com en tu navegador" },
+  "popupStep2":           { "message": "Abre el panel de Papelera desde la barra lateral" },
+  "popupStep3":           { "message": "Haz clic en Vaciar papelera en la barra de filtros y confirma" },
+  "popupOpenNotion":      { "message": "Abrir Notion →" },
+  "popupNote1":           { "message": "Funciona en app.notion.com y *.notion.so" },
+  "popupNote2":           { "message": "Gestiona cualquier cantidad de elementos" },
+  "popupNote3":           { "message": "La acción es irreversible" }
+}

@@ -1,0 +1,23 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "Elimina definitivamente tutte le pagine nel cestino di Notion con un clic. Supporta app.notion.com e notion.so." },
+
+  "emptyTrash":           { "message": "Svuota cestino" },
+  "deletionInProgress":   { "message": "Eliminazione in corso…" },
+  "trashAlreadyEmpty":    { "message": "Il cestino è già vuoto" },
+  "confirmDelete":        { "message": "Eliminare definitivamente tutti gli elementi nel cestino?\n\nQuesta azione è irreversibile." },
+  "oneItemDeleted":       { "message": "1 elemento eliminato — Aggiorna per vedere le modifiche" },
+  "manyItemsDeleted":     { "message": "$COUNT$ elementi eliminati — Aggiorna per vedere le modifiche",
+                            "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "Aggiorna" },
+  "errorMsg":             { "message": "Errore — controlla la console" },
+
+  "popupDescription":     { "message": "Elimina definitivamente tutte le pagine nel cestino di Notion con un clic." },
+  "popupStep1":           { "message": "Apri app.notion.com nel browser" },
+  "popupStep2":           { "message": "Apri il pannello Cestino dalla barra laterale" },
+  "popupStep3":           { "message": "Clicca Svuota cestino nella barra dei filtri e conferma" },
+  "popupOpenNotion":      { "message": "Apri Notion →" },
+  "popupNote1":           { "message": "Funziona su app.notion.com e *.notion.so" },
+  "popupNote2":           { "message": "Gestisce qualsiasi numero di elementi" },
+  "popupNote3":           { "message": "L’azione è irreversibile" }
+}

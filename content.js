@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  const i18n = (key, ...subs) => chrome.i18n.getMessage(key, subs) || key;
+
   const TRASH_SVG = `<svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 16 16"
     style="width:14px;height:14px;fill:currentColor;flex-shrink:0;">
     <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5zM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66H14.5a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5.5 5.03a.5.5 0 0 1 .47-.53zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5z"/>
@@ -20,7 +22,7 @@
     btn.id = 'ntc-inline-btn';
     btn.role = 'button';
     btn.tabIndex = 0;
-    btn.title = 'Empty trash';
+    btn.title = i18n('emptyTrash');
     btn.dataset.mode = mode;
 
     if (mode === 'icon') {
@@ -58,7 +60,7 @@
         flex-shrink: 0;
       `;
       const label = document.createElement('span');
-      label.innerText = 'Empty trash';
+      label.innerText = i18n('emptyTrash');
       btn.innerHTML = TRASH_SVG;
       btn.appendChild(label);
     }
@@ -85,7 +87,6 @@
       // Always include a <span> so setProgress can update it
       btn.innerHTML = `${SPINNER_SVG}<span></span>`;
       if (isIcon) {
-        // Temporarily widen icon button to pill to show percentage
         btn.style.width = 'auto';
         btn.style.borderRadius = '32px';
         btn.style.padding = '0 8px';
@@ -97,7 +98,7 @@
       btn.style.opacity = '1';
       btn.style.pointerEvents = '';
       btn.innerHTML = TRASH_SVG;
-      btn.title = 'Empty trash';
+      btn.title = i18n('emptyTrash');
       if (isIcon) {
         btn.style.width = '28px';
         btn.style.borderRadius = '6px';
@@ -105,7 +106,7 @@
         btn.style.gap = '';
       } else {
         const span = document.createElement('span');
-        span.innerText = 'Empty trash';
+        span.innerText = i18n('emptyTrash');
         btn.appendChild(span);
       }
     }
@@ -115,7 +116,7 @@
     const btn = document.getElementById('ntc-inline-btn');
     if (!btn) return;
     const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-    btn.title = `${pct}% — ${done} of ${total} deleted`;
+    btn.title = `${pct}% — ${done} / ${total}`;
     const span = btn.querySelector('span');
     if (!span) return;
     span.innerText = btn.dataset.mode === 'label'
@@ -159,7 +160,7 @@
 
     if (withRefresh) {
       const btn = document.createElement('button');
-      btn.innerText = 'Refresh';
+      btn.innerText = i18n('refresh');
       btn.style.cssText = `
         background: rgba(255,255,255,0.2);
         border: none;
@@ -173,12 +174,8 @@
         flex-shrink: 0;
         transition: background 0.12s ease;
       `;
-      btn.addEventListener('mouseenter', () => {
-        btn.style.background = 'rgba(255,255,255,0.35)';
-      });
-      btn.addEventListener('mouseleave', () => {
-        btn.style.background = 'rgba(255,255,255,0.2)';
-      });
+      btn.addEventListener('mouseenter', () => { btn.style.background = 'rgba(255,255,255,0.35)'; });
+      btn.addEventListener('mouseleave', () => { btn.style.background = 'rgba(255,255,255,0.2)'; });
       btn.addEventListener('click', () => location.reload());
       t.appendChild(btn);
     }
@@ -194,7 +191,6 @@
       t.style.transform = 'translateX(-50%) translateY(8px)';
       setTimeout(() => t.remove(), 300);
     };
-
     setTimeout(hide, withRefresh ? 8000 : 3500);
   }
 
@@ -273,19 +269,17 @@
       setLoading(btn, false);
 
       if (firstBatch.length === 0) {
-        toast('Trash is already empty');
+        toast(i18n('trashAlreadyEmpty'));
         return;
       }
 
-      const ok = confirm(`Permanently delete all items from trash?\n\nThis cannot be undone.`);
+      const ok = confirm(i18n('confirmDelete'));
       if (!ok) return;
 
       setLoading(btn, true);
 
-      let totalDeleted = 0;
+      // Pre-fetch all IDs to know grand total upfront
       let allIds = firstBatch;
-
-      // Pre-fetch remaining batches to know the grand total upfront
       while (allIds.length % 1000 === 0) {
         const more = await getBlockIds(spaceId, allIds.length);
         if (!more.length) break;
@@ -293,8 +287,9 @@
       }
 
       const grandTotal = allIds.length;
-      setProgress(0, grandTotal); // show 0% immediately
+      setProgress(0, grandTotal);
 
+      let totalDeleted = 0;
       let offset = 0;
       while (offset < allIds.length) {
         const batch = allIds.slice(offset, offset + 1000);
@@ -304,13 +299,16 @@
         });
         totalDeleted += batchDeleted;
         offset += batch.length;
-        if (batchDeleted === 0) break; // all forbidden, stop
+        if (batchDeleted === 0) break;
       }
 
-      toast(`${totalDeleted} item${totalDeleted !== 1 ? 's' : ''} deleted — Refresh to see changes`, false, true);
+      const msg = totalDeleted === 1
+        ? i18n('oneItemDeleted')
+        : i18n('manyItemsDeleted', String(totalDeleted));
+      toast(msg, false, true);
 
     } catch (err) {
-      toast('Error — check console', true);
+      toast(i18n('errorMsg'), true);
       console.error('[Notion Trash Cleaner]', err);
     } finally {
       isRunning = false;
@@ -338,33 +336,37 @@
     }
 
     if (!pillRow) {
-      // Fallback: no pill row found, inject labeled button at top
       trashMenu.prepend(buildButton('label'));
       return;
     }
 
-    // Try icon-only in the pill row
+    // Insert after the first pill ("Last edited by") so the button
+    // is always visible and not pushed out by other pills
     const iconBtn = buildButton('icon');
     if (isRunning) {
       iconBtn.style.opacity = '0.5';
       iconBtn.style.pointerEvents = 'none';
-      iconBtn.title = 'Deletion in progress…';
+      iconBtn.title = i18n('deletionInProgress');
     }
-    pillRow.appendChild(iconBtn);
 
-    // After paint, check if the button was clipped by the row's overflow
+    if (pillRow.firstElementChild) {
+      pillRow.firstElementChild.after(iconBtn);
+    } else {
+      pillRow.appendChild(iconBtn);
+    }
+
+    // After paint, verify the button isn't clipped
     requestAnimationFrame(() => {
       const btnRect = iconBtn.getBoundingClientRect();
       const rowRect = pillRow.getBoundingClientRect();
 
       if (btnRect.width === 0 || btnRect.right > rowRect.right + 1) {
-        // Clipped — remove and place labeled pill on its own row below
         iconBtn.remove();
         const labelBtn = buildButton('label');
         if (isRunning) {
           labelBtn.style.opacity = '0.5';
           labelBtn.style.pointerEvents = 'none';
-          labelBtn.title = 'Deletion in progress…';
+          labelBtn.title = i18n('deletionInProgress');
         }
         const wrapper = document.createElement('div');
         wrapper.style.cssText = 'display:flex; justify-content:flex-end; padding:4px 8px 2px;';
@@ -376,10 +378,8 @@
 
   const observer = new MutationObserver(() => {
     tryInject();
-    // Disconnect once button is in the DOM — reconnect only if it disappears
     if (document.getElementById('ntc-inline-btn')) {
       observer.disconnect();
-      // Watch for the button being removed (panel closed) to re-arm injection
       const removalWatcher = new MutationObserver(() => {
         if (!document.getElementById('ntc-inline-btn')) {
           removalWatcher.disconnect();

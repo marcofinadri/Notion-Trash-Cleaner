@@ -1,0 +1,23 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "Exclua permanentemente todas as páginas da lixeira do Notion com um clique." },
+
+  "emptyTrash":           { "message": "Esvaziar lixeira" },
+  "deletionInProgress":   { "message": "Excluindo…" },
+  "trashAlreadyEmpty":    { "message": "A lixeira já está vazia" },
+  "confirmDelete":        { "message": "Excluir permanentemente todos os itens da lixeira?\n\nEssa ação é irreversível." },
+  "oneItemDeleted":       { "message": "1 item excluído — Atualize para ver as alterações" },
+  "manyItemsDeleted":     { "message": "$COUNT$ itens excluídos — Atualize para ver as alterações",
+                            "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "Atualizar" },
+  "errorMsg":             { "message": "Erro — verifique o console" },
+
+  "popupDescription":     { "message": "Exclua permanentemente todas as páginas da lixeira do Notion com um clique." },
+  "popupStep1":           { "message": "Abra app.notion.com no seu navegador" },
+  "popupStep2":           { "message": "Abra o painel Lixeira na barra lateral" },
+  "popupStep3":           { "message": "Clique em Esvaziar lixeira na barra de filtros e confirme" },
+  "popupOpenNotion":      { "message": "Abrir Notion →" },
+  "popupNote1":           { "message": "Funciona em app.notion.com e *.notion.so" },
+  "popupNote2":           { "message": "Suporta qualquer quantidade de itens" },
+  "popupNote3":           { "message": "A ação é irreversível" }
+}

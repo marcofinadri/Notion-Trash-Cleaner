@@ -1,0 +1,20 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "一键永久删除 Notion 废纸篓中的所有页面。支持 app.notion.com 和 notion.so。" },
+  "emptyTrash":           { "message": "清空废纸篓" },
+  "deletionInProgress":   { "message": "删除中…" },
+  "trashAlreadyEmpty":    { "message": "废纸篓已为空" },
+  "confirmDelete":        { "message": "永久删除废纸篓中的所有内容？\n\n此操作无法撤销。" },
+  "oneItemDeleted":       { "message": "已永久删除 1 个项目 — 刷新页面查看变更" },
+  "manyItemsDeleted":     { "message": "已永久删除 $COUNT$ 个项目 — 刷新页面查看变更", "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "刷新" },
+  "errorMsg":             { "message": "出错了 — 请查看控制台" },
+  "popupDescription":     { "message": "一键永久删除 Notion 废纸篓中的所有页面。" },
+  "popupStep1":           { "message": "在浏览器中打开 app.notion.com" },
+  "popupStep2":           { "message": "从侧边栏打开废纸篓面板" },
+  "popupStep3":           { "message": "点击筛选栏中的"清空废纸篓"，然后确认" },
+  "popupOpenNotion":      { "message": "打开 Notion →" },
+  "popupNote1":           { "message": "适用于 app.notion.com 和 *.notion.so" },
+  "popupNote2":           { "message": "支持任意数量的项目" },
+  "popupNote3":           { "message": "操作不可逆" }
+}

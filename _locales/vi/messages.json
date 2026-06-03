@@ -1,0 +1,20 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "Xóa vĩnh viễn tất cả trang trong thùng rác Notion chỉ bằng một cú nhấp." },
+  "emptyTrash":           { "message": "Dọn thùng rác" },
+  "deletionInProgress":   { "message": "Đang xóa…" },
+  "trashAlreadyEmpty":    { "message": "Thùng rác đã trống" },
+  "confirmDelete":        { "message": "Xóa vĩnh viễn tất cả mục trong thùng rác?\n\nHành động này không thể hoàn tác." },
+  "oneItemDeleted":       { "message": "Đã xóa 1 mục — Làm mới để xem thay đổi" },
+  "manyItemsDeleted":     { "message": "Đã xóa $COUNT$ mục — Làm mới để xem thay đổi", "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "Làm mới" },
+  "errorMsg":             { "message": "Lỗi — kiểm tra bảng điều khiển" },
+  "popupDescription":     { "message": "Xóa vĩnh viễn tất cả trang trong thùng rác Notion chỉ bằng một cú nhấp." },
+  "popupStep1":           { "message": "Mở app.notion.com trong trình duyệt" },
+  "popupStep2":           { "message": "Mở bảng Thùng rác từ thanh bên" },
+  "popupStep3":           { "message": "Nhấp vào Dọn thùng rác trong thanh lọc và xác nhận" },
+  "popupOpenNotion":      { "message": "Mở Notion →" },
+  "popupNote1":           { "message": "Hoạt động trên app.notion.com và *.notion.so" },
+  "popupNote2":           { "message": "Hỗ trợ mọi số lượng mục" },
+  "popupNote3":           { "message": "Hành động không thể hoàn tác" }
+}

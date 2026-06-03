@@ -1,0 +1,20 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "Verwijder permanent alle pagina's in je Notion-prullenbak met één klik." },
+  "emptyTrash":           { "message": "Prullenbak legen" },
+  "deletionInProgress":   { "message": "Verwijderen…" },
+  "trashAlreadyEmpty":    { "message": "De prullenbak is al leeg" },
+  "confirmDelete":        { "message": "Alle items in de prullenbak definitief verwijderen?\n\nDeze actie kan niet ongedaan worden gemaakt." },
+  "oneItemDeleted":       { "message": "1 item verwijderd — Ververs de pagina om wijzigingen te zien" },
+  "manyItemsDeleted":     { "message": "$COUNT$ items verwijderd — Ververs de pagina om wijzigingen te zien", "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "Vernieuwen" },
+  "errorMsg":             { "message": "Fout — controleer de console" },
+  "popupDescription":     { "message": "Verwijder permanent alle pagina's in je Notion-prullenbak met één klik." },
+  "popupStep1":           { "message": "Open app.notion.com in je browser" },
+  "popupStep2":           { "message": "Open het Prullenbak-paneel via de zijbalk" },
+  "popupStep3":           { "message": "Klik op Prullenbak legen in de filterbalk en bevestig" },
+  "popupOpenNotion":      { "message": "Notion openen →" },
+  "popupNote1":           { "message": "Werkt op app.notion.com en *.notion.so" },
+  "popupNote2":           { "message": "Ondersteunt elk aantal items" },
+  "popupNote3":           { "message": "De actie is onomkeerbaar" }
+}

@@ -1,0 +1,20 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "Навсегда удалите все страницы из корзины Notion одним кликом." },
+  "emptyTrash":           { "message": "Очистить корзину" },
+  "deletionInProgress":   { "message": "Удаление…" },
+  "trashAlreadyEmpty":    { "message": "Корзина уже пуста" },
+  "confirmDelete":        { "message": "Удалить все элементы из корзины навсегда?\n\nЭто действие нельзя отменить." },
+  "oneItemDeleted":       { "message": "1 элемент удалён — Обновите страницу, чтобы увидеть изменения" },
+  "manyItemsDeleted":     { "message": "$COUNT$ элементов удалено — Обновите страницу, чтобы увидеть изменения", "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "Обновить" },
+  "errorMsg":             { "message": "Ошибка — проверьте консоль" },
+  "popupDescription":     { "message": "Навсегда удалите все страницы из корзины Notion одним кликом." },
+  "popupStep1":           { "message": "Откройте app.notion.com в браузере" },
+  "popupStep2":           { "message": "Откройте панель «Корзина» на боковой панели" },
+  "popupStep3":           { "message": "Нажмите «Очистить корзину» в панели фильтров и подтвердите" },
+  "popupOpenNotion":      { "message": "Открыть Notion →" },
+  "popupNote1":           { "message": "Работает на app.notion.com и *.notion.so" },
+  "popupNote2":           { "message": "Поддерживает любое количество элементов" },
+  "popupNote3":           { "message": "Действие необратимо" }
+}

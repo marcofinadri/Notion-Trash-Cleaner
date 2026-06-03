@@ -1,0 +1,20 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "एक क्लिक में अपने Notion ट्रैश के सभी पेज स्थायी रूप से हटाएं।" },
+  "emptyTrash":           { "message": "ट्रैश खाली करें" },
+  "deletionInProgress":   { "message": "हटाया जा रहा है…" },
+  "trashAlreadyEmpty":    { "message": "ट्रैश पहले से खाली है" },
+  "confirmDelete":        { "message": "ट्रैश से सभी आइटम स्थायी रूप से हटाएं?\n\nयह क्रिया पूर्ववत नहीं की जा सकती।" },
+  "oneItemDeleted":       { "message": "1 आइटम हटाया गया — बदलाव देखने के लिए रीफ्रेश करें" },
+  "manyItemsDeleted":     { "message": "$COUNT$ आइटम हटाए गए — बदलाव देखने के लिए रीफ्रेश करें", "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "रीफ्रेश" },
+  "errorMsg":             { "message": "त्रुटि — कंसोल जांचें" },
+  "popupDescription":     { "message": "एक क्लिक में अपने Notion ट्रैश के सभी पेज स्थायी रूप से हटाएं।" },
+  "popupStep1":           { "message": "अपने ब्राउज़र में app.notion.com खोलें" },
+  "popupStep2":           { "message": "साइडबार से ट्रैश पैनल खोलें" },
+  "popupStep3":           { "message": "फ़िल्टर बार में ट्रैश खाली करें पर क्लिक करें और पुष्टि करें" },
+  "popupOpenNotion":      { "message": "Notion खोलें →" },
+  "popupNote1":           { "message": "app.notion.com और *.notion.so पर काम करता है" },
+  "popupNote2":           { "message": "किसी भी संख्या में आइटम संभालता है" },
+  "popupNote3":           { "message": "क्रिया अपरिवर्तनीय है" }
+}

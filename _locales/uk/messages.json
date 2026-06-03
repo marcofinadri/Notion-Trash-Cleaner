@@ -1,0 +1,20 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "Назавжди видаліть усі сторінки з кошика Notion одним кліком." },
+  "emptyTrash":           { "message": "Очистити кошик" },
+  "deletionInProgress":   { "message": "Видалення…" },
+  "trashAlreadyEmpty":    { "message": "Кошик уже порожній" },
+  "confirmDelete":        { "message": "Видалити всі елементи з кошика назавжди?\n\nЦю дію не можна скасувати." },
+  "oneItemDeleted":       { "message": "1 елемент видалено — Оновіть сторінку, щоб побачити зміни" },
+  "manyItemsDeleted":     { "message": "$COUNT$ елементів видалено — Оновіть сторінку, щоб побачити зміни", "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "Оновити" },
+  "errorMsg":             { "message": "Помилка — перевірте консоль" },
+  "popupDescription":     { "message": "Назавжди видаліть усі сторінки з кошика Notion одним кліком." },
+  "popupStep1":           { "message": "Відкрийте app.notion.com у браузері" },
+  "popupStep2":           { "message": "Відкрийте панель «Кошик» на бічній панелі" },
+  "popupStep3":           { "message": "Натисніть «Очистити кошик» у панелі фільтрів і підтвердіть" },
+  "popupOpenNotion":      { "message": "Відкрити Notion →" },
+  "popupNote1":           { "message": "Працює на app.notion.com і *.notion.so" },
+  "popupNote2":           { "message": "Підтримує будь-яку кількість елементів" },
+  "popupNote3":           { "message": "Дія незворотна" }
+}

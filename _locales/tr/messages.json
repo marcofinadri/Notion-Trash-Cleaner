@@ -1,0 +1,20 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "Notion çöp kutunuzdaki tüm sayfaları tek tıkla kalıcı olarak silin." },
+  "emptyTrash":           { "message": "Çöpü boşalt" },
+  "deletionInProgress":   { "message": "Siliniyor…" },
+  "trashAlreadyEmpty":    { "message": "Çöp kutusu zaten boş" },
+  "confirmDelete":        { "message": "Çöp kutusundaki tüm öğeler kalıcı olarak silinsin mi?\n\nBu işlem geri alınamaz." },
+  "oneItemDeleted":       { "message": "1 öğe silindi — Değişiklikleri görmek için sayfayı yenileyin" },
+  "manyItemsDeleted":     { "message": "$COUNT$ öğe silindi — Değişiklikleri görmek için sayfayı yenileyin", "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "Yenile" },
+  "errorMsg":             { "message": "Hata — konsolu kontrol edin" },
+  "popupDescription":     { "message": "Notion çöp kutunuzdaki tüm sayfaları tek tıkla kalıcı olarak silin." },
+  "popupStep1":           { "message": "Tarayıcınızda app.notion.com'u açın" },
+  "popupStep2":           { "message": "Kenar çubuğundan Çöp kutusu panelini açın" },
+  "popupStep3":           { "message": "Filtre çubuğundaki Çöpü boşalt'a tıklayın ve onaylayın" },
+  "popupOpenNotion":      { "message": "Notion'ı Aç →" },
+  "popupNote1":           { "message": "app.notion.com ve *.notion.so üzerinde çalışır" },
+  "popupNote2":           { "message": "Herhangi sayıda öğeyi destekler" },
+  "popupNote3":           { "message": "İşlem geri alınamaz" }
+}

@@ -1,0 +1,20 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "Trwale usuń wszystkie strony z kosza Notion jednym kliknięciem." },
+  "emptyTrash":           { "message": "Opróżnij kosz" },
+  "deletionInProgress":   { "message": "Usuwanie…" },
+  "trashAlreadyEmpty":    { "message": "Kosz jest już pusty" },
+  "confirmDelete":        { "message": "Trwale usunąć wszystkie elementy z kosza?\n\nTej operacji nie można cofnąć." },
+  "oneItemDeleted":       { "message": "Usunięto 1 element — Odśwież, aby zobaczyć zmiany" },
+  "manyItemsDeleted":     { "message": "Usunięto $COUNT$ elementów — Odśwież, aby zobaczyć zmiany", "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "Odśwież" },
+  "errorMsg":             { "message": "Błąd — sprawdź konsolę" },
+  "popupDescription":     { "message": "Trwale usuń wszystkie strony z kosza Notion jednym kliknięciem." },
+  "popupStep1":           { "message": "Otwórz app.notion.com w przeglądarce" },
+  "popupStep2":           { "message": "Otwórz panel Kosz z paska bocznego" },
+  "popupStep3":           { "message": "Kliknij Opróżnij kosz na pasku filtrów i potwierdź" },
+  "popupOpenNotion":      { "message": "Otwórz Notion →" },
+  "popupNote1":           { "message": "Działa na app.notion.com i *.notion.so" },
+  "popupNote2":           { "message": "Obsługuje dowolną liczbę elementów" },
+  "popupNote3":           { "message": "Operacja jest nieodwracalna" }
+}

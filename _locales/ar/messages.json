@@ -1,0 +1,20 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "احذف جميع الصفحات في سلة مهملات Notion نهائيًا بنقرة واحدة." },
+  "emptyTrash":           { "message": "تفريغ سلة المهملات" },
+  "deletionInProgress":   { "message": "جارٍ الحذف…" },
+  "trashAlreadyEmpty":    { "message": "سلة المهملات فارغة بالفعل" },
+  "confirmDelete":        { "message": "حذف جميع العناصر من سلة المهملات نهائيًا؟\n\nلا يمكن التراجع عن هذا الإجراء." },
+  "oneItemDeleted":       { "message": "تم حذف عنصر واحد — حدِّث الصفحة لرؤية التغييرات" },
+  "manyItemsDeleted":     { "message": "تم حذف $COUNT$ عنصر — حدِّث الصفحة لرؤية التغييرات", "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "تحديث" },
+  "errorMsg":             { "message": "خطأ — تحقق من وحدة التحكم" },
+  "popupDescription":     { "message": "احذف جميع الصفحات في سلة مهملات Notion نهائيًا بنقرة واحدة." },
+  "popupStep1":           { "message": "افتح app.notion.com في متصفحك" },
+  "popupStep2":           { "message": "افتح لوحة سلة المهملات من الشريط الجانبي" },
+  "popupStep3":           { "message": "انقر على تفريغ سلة المهملات في شريط التصفية ثم أكِّد" },
+  "popupOpenNotion":      { "message": "← افتح Notion" },
+  "popupNote1":           { "message": "يعمل على app.notion.com و *.notion.so" },
+  "popupNote2":           { "message": "يتعامل مع أي عدد من العناصر" },
+  "popupNote3":           { "message": "الإجراء لا رجعة فيه" }
+}

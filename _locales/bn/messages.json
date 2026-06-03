@@ -1,0 +1,20 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "এক ক্লিকে আপনার Notion ট্র্যাশের সমস্ত পেজ স্থায়ীভাবে মুছুন।" },
+  "emptyTrash":           { "message": "ট্র্যাশ খালি করুন" },
+  "deletionInProgress":   { "message": "মুছে ফেলা হচ্ছে…" },
+  "trashAlreadyEmpty":    { "message": "ট্র্যাশ ইতিমধ্যে খালি" },
+  "confirmDelete":        { "message": "ট্র্যাশ থেকে সমস্ত আইটেম স্থায়ীভাবে মুছবেন?\n\nএটি পূর্বাবস্থায় ফেরানো যাবে না।" },
+  "oneItemDeleted":       { "message": "১টি আইটেম মুছে ফেলা হয়েছে — পরিবর্তন দেখতে রিফ্রেশ করুন" },
+  "manyItemsDeleted":     { "message": "$COUNT$টি আইটেম মুছে ফেলা হয়েছে — পরিবর্তন দেখতে রিফ্রেশ করুন", "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "রিফ্রেশ" },
+  "errorMsg":             { "message": "ত্রুটি — কনসোল দেখুন" },
+  "popupDescription":     { "message": "এক ক্লিকে আপনার Notion ট্র্যাশের সমস্ত পেজ স্থায়ীভাবে মুছুন।" },
+  "popupStep1":           { "message": "আপনার ব্রাউজারে app.notion.com খুলুন" },
+  "popupStep2":           { "message": "সাইডবার থেকে ট্র্যাশ প্যানেল খুলুন" },
+  "popupStep3":           { "message": "ফিল্টার বারে ট্র্যাশ খালি করুন ক্লিক করুন এবং নিশ্চিত করুন" },
+  "popupOpenNotion":      { "message": "Notion খুলুন →" },
+  "popupNote1":           { "message": "app.notion.com এবং *.notion.so-তে কাজ করে" },
+  "popupNote2":           { "message": "যেকোনো সংখ্যক আইটেম সমর্থন করে" },
+  "popupNote3":           { "message": "এই কাজ পূর্বাবস্থায় ফেরানো যাবে না" }
+}

@@ -1,0 +1,20 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "ワンクリックでNotionのゴミ箱内のすべてのページを完全に削除します。" },
+  "emptyTrash":           { "message": "ゴミ箱を空にする" },
+  "deletionInProgress":   { "message": "削除中…" },
+  "trashAlreadyEmpty":    { "message": "ゴミ箱はすでに空です" },
+  "confirmDelete":        { "message": "ゴミ箱内のすべてのアイテムを完全に削除しますか？\n\nこの操作は元に戻せません。" },
+  "oneItemDeleted":       { "message": "1件を完全に削除しました — ページを更新して確認" },
+  "manyItemsDeleted":     { "message": "$COUNT$件を完全に削除しました — ページを更新して確認", "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "更新" },
+  "errorMsg":             { "message": "エラー — コンソールを確認" },
+  "popupDescription":     { "message": "ワンクリックでNotionのゴミ箱内のすべてのページを完全に削除します。" },
+  "popupStep1":           { "message": "ブラウザでapp.notion.comを開く" },
+  "popupStep2":           { "message": "サイドバーからゴミ箱パネルを開く" },
+  "popupStep3":           { "message": "フィルターバーの「ゴミ箱を空にする」をクリックして確認" },
+  "popupOpenNotion":      { "message": "Notionを開く →" },
+  "popupNote1":           { "message": "app.notion.comと*.notion.soで動作" },
+  "popupNote2":           { "message": "任意の件数に対応" },
+  "popupNote3":           { "message": "この操作は元に戻せません" }
+}

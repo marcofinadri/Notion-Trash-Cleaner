@@ -1,0 +1,20 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "ลบทุกหน้าในถังขยะ Notion อย่างถาวรด้วยคลิกเดียว" },
+  "emptyTrash":           { "message": "ล้างถังขยะ" },
+  "deletionInProgress":   { "message": "กำลังลบ…" },
+  "trashAlreadyEmpty":    { "message": "ถังขยะว่างอยู่แล้ว" },
+  "confirmDelete":        { "message": "ลบรายการทั้งหมดในถังขยะถาวรหรือไม่?\n\nไม่สามารถย้อนกลับได้" },
+  "oneItemDeleted":       { "message": "ลบ 1 รายการแล้ว — รีเฟรชเพื่อดูการเปลี่ยนแปลง" },
+  "manyItemsDeleted":     { "message": "ลบ $COUNT$ รายการแล้ว — รีเฟรชเพื่อดูการเปลี่ยนแปลง", "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "รีเฟรช" },
+  "errorMsg":             { "message": "ข้อผิดพลาด — ตรวจสอบคอนโซล" },
+  "popupDescription":     { "message": "ลบทุกหน้าในถังขยะ Notion อย่างถาวรด้วยคลิกเดียว" },
+  "popupStep1":           { "message": "เปิด app.notion.com ในเบราว์เซอร์" },
+  "popupStep2":           { "message": "เปิดแผงถังขยะจากแถบด้านข้าง" },
+  "popupStep3":           { "message": "คลิกล้างถังขยะในแถบตัวกรองแล้วยืนยัน" },
+  "popupOpenNotion":      { "message": "เปิด Notion →" },
+  "popupNote1":           { "message": "ใช้งานได้บน app.notion.com และ *.notion.so" },
+  "popupNote2":           { "message": "รองรับทุกจำนวนรายการ" },
+  "popupNote3":           { "message": "การกระทำนี้ไม่สามารถย้อนกลับได้" }
+}

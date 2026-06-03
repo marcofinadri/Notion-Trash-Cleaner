@@ -1,0 +1,20 @@
+{
+  "extensionName":        { "message": "Notion Trash Cleaner" },
+  "extensionDescription": { "message": "Hapus semua halaman di sampah Notion secara permanen dengan satu klik." },
+  "emptyTrash":           { "message": "Kosongkan sampah" },
+  "deletionInProgress":   { "message": "Menghapus…" },
+  "trashAlreadyEmpty":    { "message": "Sampah sudah kosong" },
+  "confirmDelete":        { "message": "Hapus semua item di sampah secara permanen?\n\nTindakan ini tidak dapat dibatalkan." },
+  "oneItemDeleted":       { "message": "1 item dihapus — Muat ulang untuk melihat perubahan" },
+  "manyItemsDeleted":     { "message": "$COUNT$ item dihapus — Muat ulang untuk melihat perubahan", "placeholders": { "count": { "content": "$1", "example": "42" } } },
+  "refresh":              { "message": "Muat Ulang" },
+  "errorMsg":             { "message": "Kesalahan — periksa konsol" },
+  "popupDescription":     { "message": "Hapus semua halaman di sampah Notion secara permanen dengan satu klik." },
+  "popupStep1":           { "message": "Buka app.notion.com di browser Anda" },
+  "popupStep2":           { "message": "Buka panel Sampah dari bilah samping" },
+  "popupStep3":           { "message": "Klik Kosongkan sampah di bilah filter dan konfirmasi" },
+  "popupOpenNotion":      { "message": "Buka Notion →" },
+  "popupNote1":           { "message": "Berfungsi di app.notion.com dan *.notion.so" },
+  "popupNote2":           { "message": "Mendukung item dalam jumlah berapa pun" },
+  "popupNote3":           { "message": "Tindakan ini tidak dapat dibalik" }
+}

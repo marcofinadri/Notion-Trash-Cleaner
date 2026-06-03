@@ -202,7 +202,10 @@
       headers: { accept: '*/*', 'cache-control': 'no-cache', 'content-type': 'application/json' },
       body: '{}',
     });
+    if (!resp.ok) throw new Error(`loadUserContent failed: ${resp.status}`);
     const json = await resp.json();
+    if (!json.recordMap?.space || !json.recordMap?.notion_user)
+      throw new Error('Unexpected loadUserContent response shape');
     return {
       spaceId: Object.keys(json.recordMap.space)[0],
       userId: Object.keys(json.recordMap.notion_user)[0],
@@ -223,8 +226,9 @@
         sort: { field: 'relevance' }, source: 'quick_find_input_change', searchExperimentOverrides: {},
       }),
     });
+    if (!resp.ok) throw new Error(`search failed: ${resp.status}`);
     const json = await resp.json();
-    return json.results.map(el => el.id);
+    return (json.results ?? []).map(el => el.id);
   }
 
   async function deleteBlocks(blockIds, spaceId, userId, onProgress) {
@@ -244,7 +248,11 @@
           permanentlyDelete: true,
         }),
       });
-      if (resp.ok) deleted += chunk.length;
+      if (resp.ok) {
+        deleted += chunk.length;
+      } else {
+        console.warn(`[Notion Trash Cleaner] deleteBlocks chunk failed: ${resp.status}`);
+      }
       onProgress(deleted, blockIds.length);
     }
     return deleted;

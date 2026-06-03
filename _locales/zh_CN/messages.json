@@ -12,7 +12,7 @@
   "popupDescription":     { "message": "一键永久删除 Notion 废纸篓中的所有页面。" },
   "popupStep1":           { "message": "在浏览器中打开 app.notion.com" },
   "popupStep2":           { "message": "从侧边栏打开废纸篓面板" },
-  "popupStep3":           { "message": "点击筛选栏中的"清空废纸篓"，然后确认" },
+  "popupStep3":           { "message": "点击筛选栏中的「清空废纸篓」，然后确认" },
   "popupOpenNotion":      { "message": "打开 Notion →" },
   "popupNote1":           { "message": "适用于 app.notion.com 和 *.notion.so" },
   "popupNote2":           { "message": "支持任意数量的项目" },

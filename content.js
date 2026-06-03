@@ -80,17 +80,30 @@
   // --- LOADING STATE ---
 
   function setLoading(btn, loading) {
-    const hasLabel = btn.dataset.mode === 'label';
+    const isIcon = btn.dataset.mode === 'icon';
     if (loading) {
-      btn.innerHTML = hasLabel ? `${SPINNER_SVG}<span>Working…</span>` : SPINNER_SVG;
-      btn.style.opacity = '0.7';
+      // Always include a <span> so setProgress can update it
+      btn.innerHTML = `${SPINNER_SVG}<span></span>`;
+      if (isIcon) {
+        // Temporarily widen icon button to pill to show percentage
+        btn.style.width = 'auto';
+        btn.style.borderRadius = '32px';
+        btn.style.padding = '0 8px';
+        btn.style.gap = '4px';
+      }
+      btn.style.opacity = '0.85';
       btn.style.pointerEvents = 'none';
     } else {
       btn.style.opacity = '1';
       btn.style.pointerEvents = '';
       btn.innerHTML = TRASH_SVG;
       btn.title = 'Empty trash';
-      if (hasLabel) {
+      if (isIcon) {
+        btn.style.width = '28px';
+        btn.style.borderRadius = '6px';
+        btn.style.padding = '0';
+        btn.style.gap = '';
+      } else {
         const span = document.createElement('span');
         span.innerText = 'Empty trash';
         btn.appendChild(span);
@@ -98,12 +111,16 @@
     }
   }
 
-  function setProgress(count) {
+  function setProgress(done, total) {
     const btn = document.getElementById('ntc-inline-btn');
     if (!btn) return;
-    btn.title = `${count} deleted…`;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    btn.title = `${pct}% — ${done} of ${total} deleted`;
     const span = btn.querySelector('span');
-    if (span) span.innerText = `${count} deleted…`;
+    if (!span) return;
+    span.innerText = btn.dataset.mode === 'label'
+      ? `${pct}% — ${done} / ${total}`
+      : `${pct}%`;
   }
 
   // --- TOAST ---
@@ -196,12 +213,12 @@
     };
   }
 
-  async function getBlockIds(spaceId) {
+  async function getBlockIds(spaceId, offset = 0) {
     const resp = await fetch('https://app.notion.com/api/v3/search', {
       method: 'POST', mode: 'cors', credentials: 'include',
       headers: { accept: '*/*', 'cache-control': 'no-cache', 'content-type': 'application/json' },
       body: JSON.stringify({
-        type: 'BlocksInSpace', spaceId, limit: 1000,
+        type: 'BlocksInSpace', spaceId, limit: 1000, from: offset,
         filters: {
           isDeletedOnly: true, excludeTemplates: false, navigableBlockContentOnly: false,
           requireEditPermissions: false, includePublicPagesWithoutExplicitAccess: false,
@@ -215,22 +232,26 @@
   }
 
   async function deleteBlocks(blockIds, spaceId, userId, onProgress) {
-    // Send all IDs in a single API call — the endpoint accepts an array
-    const resp = await fetch('https://app.notion.com/api/v3/deleteBlocks', {
-      method: 'POST', mode: 'cors', credentials: 'include',
-      referrerPolicy: 'strict-origin-when-cross-origin',
-      headers: {
-        accept: '*/*', 'cache-control': 'no-cache', 'content-type': 'application/json',
-        'x-notion-active-user-header': userId,
-      },
-      body: JSON.stringify({
-        blocks: blockIds.map(id => ({ id, spaceId })),
-        permanentlyDelete: true,
-      }),
-    });
-    const count = resp.ok ? blockIds.length : 0;
-    onProgress(count);
-    return count;
+    const CHUNK = 100;
+    let deleted = 0;
+    for (let i = 0; i < blockIds.length; i += CHUNK) {
+      const chunk = blockIds.slice(i, i + CHUNK);
+      const resp = await fetch('https://app.notion.com/api/v3/deleteBlocks', {
+        method: 'POST', mode: 'cors', credentials: 'include',
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        headers: {
+          accept: '*/*', 'cache-control': 'no-cache', 'content-type': 'application/json',
+          'x-notion-active-user-header': userId,
+        },
+        body: JSON.stringify({
+          blocks: chunk.map(id => ({ id, spaceId })),
+          permanentlyDelete: true,
+        }),
+      });
+      if (resp.ok) deleted += chunk.length;
+      onProgress(deleted, blockIds.length);
+    }
+    return deleted;
   }
 
   // --- MAIN HANDLER ---
@@ -262,18 +283,28 @@
       setLoading(btn, true);
 
       let totalDeleted = 0;
-      let batchIds = firstBatch;
+      let allIds = firstBatch;
 
-      while (batchIds.length > 0) {
+      // Pre-fetch remaining batches to know the grand total upfront
+      while (allIds.length % 1000 === 0) {
+        const more = await getBlockIds(spaceId, allIds.length);
+        if (!more.length) break;
+        allIds = allIds.concat(more);
+      }
+
+      const grandTotal = allIds.length;
+      setProgress(0, grandTotal); // show 0% immediately
+
+      let offset = 0;
+      while (offset < allIds.length) {
+        const batch = allIds.slice(offset, offset + 1000);
         const base = totalDeleted;
-        const batchDeleted = await deleteBlocks(batchIds, spaceId, userId, (done) => {
-          setProgress(base + done);
+        const batchDeleted = await deleteBlocks(batch, spaceId, userId, (done) => {
+          setProgress(base + done, grandTotal);
         });
         totalDeleted += batchDeleted;
-
-        // Stop if last batch wasn't full, or if nothing was deleted (all forbidden)
-        if (batchIds.length < 1000 || batchDeleted === 0) break;
-        batchIds = await getBlockIds(spaceId);
+        offset += batch.length;
+        if (batchDeleted === 0) break; // all forbidden, stop
       }
 
       toast(`${totalDeleted} item${totalDeleted !== 1 ? 's' : ''} deleted — Refresh to see changes`, false, true);

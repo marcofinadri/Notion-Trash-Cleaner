@@ -1,7 +1,20 @@
-(function () {
+(() => {
   'use strict';
 
-  const i18n = (key, ...subs) => chrome.i18n.getMessage(key, subs) || key;
+  const API_BASE = 'https://app.notion.com/api/v3';
+  const SEARCH_PAGE_SIZE = 1000;
+  const DELETE_CHUNK_SIZE = 100;
+  const MAX_RETRIES = 4;
+  const RETRY_BASE_DELAY = 500;
+
+  const BUTTON_ID = 'ntc-inline-btn';
+  const TOAST_ID = 'ntc-toast';
+  const BG_IDLE = 'var(--ca-redBacSecTra, rgba(235,87,87,0.12))';
+  const BG_HOVER = 'var(--ca-redBacTerTra, rgba(235,87,87,0.2))';
+  const FG = 'var(--c-redTexAccPri, rgba(235,87,87,1))';
+
+  const tr = (key, ...subs) => chrome.i18n.getMessage(key, subs) || key;
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const TRASH_SVG = `<svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 16 16"
     style="width:14px;height:14px;fill:currentColor;flex-shrink:0;">
@@ -14,125 +27,89 @@
     <style>@keyframes ntc-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>
   </svg>`;
 
-  // --- BUTTON ---
+  const BUTTON_BASE_STYLE = `
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: ${FG};
+    background: ${BG_IDLE};
+    transition: background 0.12s ease, opacity 0.12s ease;
+    user-select: none;
+    flex-shrink: 0;
+  `;
 
-  // mode: 'icon' = icon only (in pill row), 'label' = icon + text (own row below)
+  const ICON_BUTTON_STYLE = `${BUTTON_BASE_STYLE}
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+  `;
+
+  const LABEL_BUTTON_STYLE = `${BUTTON_BASE_STYLE}
+    font-size: 14px;
+    gap: 5px;
+    white-space: nowrap;
+    border-radius: 32px;
+    height: 24px;
+    padding: 0 8px;
+  `;
+
+  let isRunning = false;
+
+  const getButton = () => document.getElementById(BUTTON_ID);
+
   function buildButton(mode) {
     const btn = document.createElement('div');
-    btn.id = 'ntc-inline-btn';
+    btn.id = BUTTON_ID;
     btn.role = 'button';
     btn.tabIndex = 0;
-    btn.title = i18n('emptyTrash');
+    btn.title = tr('emptyTrash');
     btn.dataset.mode = mode;
+    btn.style.cssText = mode === 'icon' ? ICON_BUTTON_STYLE : LABEL_BUTTON_STYLE;
+    btn.innerHTML = TRASH_SVG;
 
-    if (mode === 'icon') {
-      btn.style.cssText = `
-        width: 28px;
-        height: 28px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 6px;
-        cursor: pointer;
-        color: var(--c-redTexAccPri, rgba(235,87,87,1));
-        background: var(--ca-redBacSecTra, rgba(235,87,87,0.12));
-        transition: background 0.12s ease, opacity 0.12s ease;
-        user-select: none;
-        flex-shrink: 0;
-      `;
-      btn.innerHTML = TRASH_SVG;
-    } else {
-      btn.style.cssText = `
-        font-size: 14px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        white-space: nowrap;
-        border-radius: 32px;
-        height: 24px;
-        padding: 0 8px;
-        cursor: pointer;
-        color: var(--c-redTexAccPri, rgba(235,87,87,1));
-        background: var(--ca-redBacSecTra, rgba(235,87,87,0.12));
-        transition: background 0.12s ease, opacity 0.12s ease;
-        user-select: none;
-        flex-shrink: 0;
-      `;
+    if (mode === 'label') {
       const label = document.createElement('span');
-      label.innerText = i18n('emptyTrash');
-      btn.innerHTML = TRASH_SVG;
+      label.innerText = tr('emptyTrash');
       btn.appendChild(label);
     }
 
-    btn.addEventListener('mouseenter', () => {
-      btn.style.background = 'var(--ca-redBacTerTra, rgba(235,87,87,0.2))';
-    });
-    btn.addEventListener('mouseleave', () => {
-      btn.style.background = 'var(--ca-redBacSecTra, rgba(235,87,87,0.12))';
-    });
+    btn.addEventListener('mouseenter', () => { btn.style.background = BG_HOVER; });
+    btn.addEventListener('mouseleave', () => { btn.style.background = BG_IDLE; });
     btn.addEventListener('click', handleEmptyTrash);
-    btn.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') handleEmptyTrash();
+    btn.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') handleEmptyTrash();
     });
 
     return btn;
   }
 
-  // --- LOADING STATE ---
+  function markBusy(btn) {
+    btn.style.opacity = '0.5';
+    btn.style.pointerEvents = 'none';
+    btn.title = tr('deletionInProgress');
+  }
 
   function setLoading(btn, loading) {
-    const isIcon = btn.dataset.mode === 'icon';
-    if (loading) {
-      // Always include a <span> so setProgress can update it
-      btn.innerHTML = `${SPINNER_SVG}<span></span>`;
-      if (isIcon) {
-        btn.style.width = 'auto';
-        btn.style.borderRadius = '32px';
-        btn.style.padding = '0 8px';
-        btn.style.gap = '4px';
-      }
-      btn.style.opacity = '0.85';
-      btn.style.pointerEvents = 'none';
-    } else {
-      btn.style.opacity = '1';
-      btn.style.pointerEvents = '';
-      btn.innerHTML = TRASH_SVG;
-      btn.title = i18n('emptyTrash');
-      if (isIcon) {
-        btn.style.width = '28px';
-        btn.style.borderRadius = '6px';
-        btn.style.padding = '0';
-        btn.style.gap = '';
-      } else {
-        const span = document.createElement('span');
-        span.innerText = i18n('emptyTrash');
-        btn.appendChild(span);
-      }
+    btn.style.opacity = loading ? '0.85' : '1';
+    btn.style.pointerEvents = loading ? 'none' : '';
+    btn.innerHTML = loading ? SPINNER_SVG : TRASH_SVG;
+    btn.title = loading ? tr('deletionInProgress') : tr('emptyTrash');
+
+    if (btn.dataset.mode === 'label') {
+      const span = document.createElement('span');
+      span.innerText = loading ? tr('deletionInProgress') : tr('emptyTrash');
+      btn.appendChild(span);
     }
   }
 
-  function setProgress(done, total) {
-    const btn = document.getElementById('ntc-inline-btn');
-    if (!btn) return;
-    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-    btn.title = `${pct}% — ${done} / ${total}`;
-    const span = btn.querySelector('span');
-    if (!span) return;
-    span.innerText = btn.dataset.mode === 'label'
-      ? `${pct}% — ${done} / ${total}`
-      : `${pct}%`;
-  }
-
-  // --- TOAST ---
-
-  function toast(msg, isError = false, withRefresh = false) {
-    const existing = document.getElementById('ntc-toast');
+  function toast(message, isError = false, withRefresh = false) {
+    const existing = document.getElementById(TOAST_ID);
     if (existing) existing.remove();
 
-    const t = document.createElement('div');
-    t.id = 'ntc-toast';
-    t.style.cssText = `
+    const el = document.createElement('div');
+    el.id = TOAST_ID;
+    el.style.cssText = `
       position: fixed;
       bottom: 24px;
       left: 50%;
@@ -155,13 +132,13 @@
     `;
 
     const text = document.createElement('span');
-    text.innerText = msg;
-    t.appendChild(text);
+    text.innerText = message;
+    el.appendChild(text);
 
     if (withRefresh) {
-      const btn = document.createElement('button');
-      btn.innerText = i18n('refresh');
-      btn.style.cssText = `
+      const refreshBtn = document.createElement('button');
+      refreshBtn.innerText = tr('refresh');
+      refreshBtn.style.cssText = `
         background: rgba(255,255,255,0.2);
         border: none;
         border-radius: 4px;
@@ -174,97 +151,150 @@
         flex-shrink: 0;
         transition: background 0.12s ease;
       `;
-      btn.addEventListener('mouseenter', () => { btn.style.background = 'rgba(255,255,255,0.35)'; });
-      btn.addEventListener('mouseleave', () => { btn.style.background = 'rgba(255,255,255,0.2)'; });
-      btn.addEventListener('click', () => location.reload());
-      t.appendChild(btn);
+      refreshBtn.addEventListener('mouseenter', () => { refreshBtn.style.background = 'rgba(255,255,255,0.35)'; });
+      refreshBtn.addEventListener('mouseleave', () => { refreshBtn.style.background = 'rgba(255,255,255,0.2)'; });
+      refreshBtn.addEventListener('click', () => location.reload());
+      el.appendChild(refreshBtn);
     }
 
-    document.body.appendChild(t);
+    document.body.appendChild(el);
+
     requestAnimationFrame(() => {
-      t.style.opacity = '1';
-      t.style.transform = 'translateX(-50%) translateY(0)';
+      el.style.opacity = '1';
+      el.style.transform = 'translateX(-50%) translateY(0)';
     });
 
-    const hide = () => {
-      t.style.opacity = '0';
-      t.style.transform = 'translateX(-50%) translateY(8px)';
-      setTimeout(() => t.remove(), 300);
-    };
-    setTimeout(hide, withRefresh ? 8000 : 3500);
+    setTimeout(() => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(-50%) translateY(8px)';
+      setTimeout(() => el.remove(), 300);
+    }, withRefresh ? 8000 : 3500);
   }
 
-  // --- API ---
+  async function apiFetch(path, body, extraHeaders = {}) {
+    const headers = {
+      accept: '*/*',
+      'cache-control': 'no-cache',
+      'content-type': 'application/json',
+      ...extraHeaders,
+    };
+
+    let lastError;
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const resp = await fetch(`${API_BASE}/${path}`, {
+          method: 'POST',
+          mode: 'cors',
+          credentials: 'include',
+          headers,
+          body: JSON.stringify(body),
+        });
+        if (resp.ok) return resp.json();
+        if (resp.status !== 429 && resp.status < 500) {
+          throw new Error(`${path} failed: ${resp.status}`);
+        }
+        lastError = new Error(`${path} transient: ${resp.status}`);
+      } catch (error) {
+        lastError = error;
+      }
+      if (attempt < MAX_RETRIES) await delay(RETRY_BASE_DELAY * 2 ** attempt);
+    }
+    throw lastError;
+  }
 
   async function getSpaceAndUser() {
-    const resp = await fetch('https://app.notion.com/api/v3/loadUserContent', {
-      method: 'POST', mode: 'cors', credentials: 'include',
-      headers: { accept: '*/*', 'cache-control': 'no-cache', 'content-type': 'application/json' },
-      body: '{}',
-    });
-    if (!resp.ok) throw new Error(`loadUserContent failed: ${resp.status}`);
-    const json = await resp.json();
-    if (!json.recordMap?.space || !json.recordMap?.notion_user)
+    const json = await apiFetch('loadUserContent', {});
+    if (!json.recordMap?.space || !json.recordMap?.notion_user) {
       throw new Error('Unexpected loadUserContent response shape');
+    }
     return {
       spaceId: Object.keys(json.recordMap.space)[0],
       userId: Object.keys(json.recordMap.notion_user)[0],
     };
   }
 
-  async function getBlockIds(spaceId, offset = 0) {
-    const resp = await fetch('https://app.notion.com/api/v3/search', {
-      method: 'POST', mode: 'cors', credentials: 'include',
-      headers: { accept: '*/*', 'cache-control': 'no-cache', 'content-type': 'application/json' },
-      body: JSON.stringify({
-        type: 'BlocksInSpace', spaceId, limit: 1000, from: offset,
-        filters: {
-          isDeletedOnly: true, excludeTemplates: false, navigableBlockContentOnly: false,
-          requireEditPermissions: false, includePublicPagesWithoutExplicitAccess: false,
-          ancestors: [], createdBy: [], editedBy: [], lastEditedTime: {}, createdTime: {}, inTeams: [],
-        },
-        sort: { field: 'relevance' }, source: 'quick_find_input_change', searchExperimentOverrides: {},
-      }),
+  async function fetchTrashedPage(spaceId, from) {
+    const json = await apiFetch('search', {
+      type: 'BlocksInSpace',
+      spaceId,
+      limit: SEARCH_PAGE_SIZE,
+      from,
+      filters: {
+        isDeletedOnly: true,
+        excludeTemplates: false,
+        navigableBlockContentOnly: false,
+        requireEditPermissions: false,
+        includePublicPagesWithoutExplicitAccess: false,
+        ancestors: [],
+        createdBy: [],
+        editedBy: [],
+        lastEditedTime: {},
+        createdTime: {},
+        inTeams: [],
+      },
+      sort: { field: 'relevance' },
+      source: 'quick_find_input_change',
+      searchExperimentOverrides: {},
     });
-    if (!resp.ok) throw new Error(`search failed: ${resp.status}`);
-    const json = await resp.json();
-    return (json.results ?? []).map(el => el.id);
+    return (json.results ?? []).map((result) => result.id);
   }
 
-  async function deleteBlocks(blockIds, spaceId, userId, onProgress) {
-    const CHUNK = 100;
-    let deleted = 0;
-    for (let i = 0; i < blockIds.length; i += CHUNK) {
-      const chunk = blockIds.slice(i, i + CHUNK);
-      const resp = await fetch('https://app.notion.com/api/v3/deleteBlocks', {
-        method: 'POST', mode: 'cors', credentials: 'include',
-        referrerPolicy: 'strict-origin-when-cross-origin',
-        headers: {
-          accept: '*/*', 'cache-control': 'no-cache', 'content-type': 'application/json',
-          'x-notion-active-user-header': userId,
-        },
-        body: JSON.stringify({
-          blocks: chunk.map(id => ({ id, spaceId })),
-          permanentlyDelete: true,
-        }),
-      });
-      if (resp.ok) {
-        deleted += chunk.length;
-      } else {
-        console.warn(`[Notion Trash Cleaner] deleteBlocks chunk failed: ${resp.status}`);
+  async function deleteBatch(ids, spaceId, userId, skipped) {
+    if (ids.length === 0) return 0;
+    try {
+      await apiFetch(
+        'deleteBlocks',
+        { blocks: ids.map((id) => ({ id, spaceId })), permanentlyDelete: true },
+        { 'x-notion-active-user-header': userId },
+      );
+      return ids.length;
+    } catch (error) {
+      if (ids.length === 1) {
+        skipped.add(ids[0]);
+        console.warn('[Notion Trash Cleaner] skipping undeletable block', ids[0], error);
+        return 0;
       }
-      onProgress(deleted, blockIds.length);
+      const mid = ids.length >> 1;
+      const left = await deleteBatch(ids.slice(0, mid), spaceId, userId, skipped);
+      const right = await deleteBatch(ids.slice(mid), spaceId, userId, skipped);
+      return left + right;
+    }
+  }
+
+  async function deletePage(ids, spaceId, userId, skipped) {
+    let deleted = 0;
+    for (let i = 0; i < ids.length; i += DELETE_CHUNK_SIZE) {
+      deleted += await deleteBatch(ids.slice(i, i + DELETE_CHUNK_SIZE), spaceId, userId, skipped);
     }
     return deleted;
   }
 
-  // --- MAIN HANDLER ---
+  async function emptyTrash(spaceId, userId) {
+    const skipped = new Set();
+    let deleted = 0;
+    let from = 0;
 
-  let isRunning = false;
+    while (true) {
+      const page = await fetchTrashedPage(spaceId, from);
+      if (page.length === 0) break;
+
+      const ids = page.filter((id) => !skipped.has(id));
+      if (ids.length === 0) {
+        if (page.length < SEARCH_PAGE_SIZE) break;
+        from += page.length;
+        continue;
+      }
+
+      deleted += await deletePage(ids, spaceId, userId, skipped);
+      from = 0;
+    }
+
+    return deleted;
+  }
 
   async function handleEmptyTrash() {
     if (isRunning) return;
-    const btn = document.getElementById('ntc-inline-btn');
+    const btn = getButton();
     if (!btn) return;
 
     isRunning = true;
@@ -272,90 +302,64 @@
 
     try {
       const { spaceId, userId } = await getSpaceAndUser();
-      const firstBatch = await getBlockIds(spaceId);
+      const firstPage = await fetchTrashedPage(spaceId, 0);
 
       setLoading(btn, false);
 
-      if (firstBatch.length === 0) {
-        toast(i18n('trashAlreadyEmpty'));
+      if (firstPage.length === 0) {
+        toast(tr('trashAlreadyEmpty'));
         return;
       }
 
-      const ok = confirm(i18n('confirmDelete'));
-      if (!ok) return;
+      if (!confirm(tr('confirmDelete'))) return;
 
       setLoading(btn, true);
+      const deleted = await emptyTrash(spaceId, userId);
 
-      // Pre-fetch all IDs to know grand total upfront
-      let allIds = firstBatch;
-      while (allIds.length % 1000 === 0) {
-        const more = await getBlockIds(spaceId, allIds.length);
-        if (!more.length) break;
-        allIds = allIds.concat(more);
-      }
-
-      const grandTotal = allIds.length;
-      setProgress(0, grandTotal);
-
-      let totalDeleted = 0;
-      let offset = 0;
-      while (offset < allIds.length) {
-        const batch = allIds.slice(offset, offset + 1000);
-        const base = totalDeleted;
-        const batchDeleted = await deleteBlocks(batch, spaceId, userId, (done) => {
-          setProgress(base + done, grandTotal);
-        });
-        totalDeleted += batchDeleted;
-        offset += batch.length;
-        if (batchDeleted === 0) break;
-      }
-
-      const msg = totalDeleted === 1
-        ? i18n('oneItemDeleted')
-        : i18n('manyItemsDeleted', String(totalDeleted));
-      toast(msg, false, true);
-
-    } catch (err) {
-      toast(i18n('errorMsg'), true);
-      console.error('[Notion Trash Cleaner]', err);
+      toast(deleted === 1 ? tr('oneItemDeleted') : tr('manyItemsDeleted', String(deleted)), false, true);
+    } catch (error) {
+      toast(tr('errorMsg'), true);
+      console.error('[Notion Trash Cleaner]', error);
     } finally {
       isRunning = false;
-      const b = document.getElementById('ntc-inline-btn');
-      if (b) setLoading(b, false);
+      const current = getButton();
+      if (current) setLoading(current, false);
     }
   }
 
-  // --- INJECTION ---
+  function findPillRow(trashMenu) {
+    for (const div of trashMenu.querySelectorAll('div')) {
+      const style = div.getAttribute('style') || '';
+      if (style.includes('flex') && /gap:\s*6px/.test(style)) return div;
+    }
+    return null;
+  }
+
+  function injectLabelFallback(pillRow) {
+    const labelBtn = buildButton('label');
+    if (isRunning) markBusy(labelBtn);
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'display:flex; justify-content:flex-end; padding:4px 8px 2px;';
+    wrapper.appendChild(labelBtn);
+    pillRow.after(wrapper);
+  }
 
   function tryInject() {
-    if (document.getElementById('ntc-inline-btn')) return;
+    if (getButton()) return;
 
     const trashMenu = document.querySelector('.notion-sidebar-trash-menu');
     if (!trashMenu) return;
 
-    // Find the filter pill row
-    let pillRow = null;
-    for (const div of trashMenu.querySelectorAll('div')) {
-      const style = div.getAttribute('style') || '';
-      if (style.includes('flex') && /gap:\s*6px/.test(style)) {
-        pillRow = div;
-        break;
-      }
-    }
-
+    const pillRow = findPillRow(trashMenu);
     if (!pillRow) {
-      trashMenu.prepend(buildButton('label'));
+      const labelBtn = buildButton('label');
+      if (isRunning) markBusy(labelBtn);
+      trashMenu.prepend(labelBtn);
       return;
     }
 
-    // Insert after the first pill ("Last edited by") so the button
-    // is always visible and not pushed out by other pills
     const iconBtn = buildButton('icon');
-    if (isRunning) {
-      iconBtn.style.opacity = '0.5';
-      iconBtn.style.pointerEvents = 'none';
-      iconBtn.title = i18n('deletionInProgress');
-    }
+    if (isRunning) markBusy(iconBtn);
 
     if (pillRow.firstElementChild) {
       pillRow.firstElementChild.after(iconBtn);
@@ -363,41 +367,38 @@
       pillRow.appendChild(iconBtn);
     }
 
-    // After paint, verify the button isn't clipped
     requestAnimationFrame(() => {
       const btnRect = iconBtn.getBoundingClientRect();
       const rowRect = pillRow.getBoundingClientRect();
-
       if (btnRect.width === 0 || btnRect.right > rowRect.right + 1) {
         iconBtn.remove();
-        const labelBtn = buildButton('label');
-        if (isRunning) {
-          labelBtn.style.opacity = '0.5';
-          labelBtn.style.pointerEvents = 'none';
-          labelBtn.title = i18n('deletionInProgress');
-        }
-        const wrapper = document.createElement('div');
-        wrapper.style.cssText = 'display:flex; justify-content:flex-end; padding:4px 8px 2px;';
-        wrapper.appendChild(labelBtn);
-        pillRow.after(wrapper);
+        injectLabelFallback(pillRow);
       }
     });
   }
 
-  const observer = new MutationObserver(() => {
-    tryInject();
-    if (document.getElementById('ntc-inline-btn')) {
+  function watchForButton() {
+    const observer = new MutationObserver(() => {
+      tryInject();
+      if (!getButton()) return;
       observer.disconnect();
       const removalWatcher = new MutationObserver(() => {
-        if (!document.getElementById('ntc-inline-btn')) {
-          removalWatcher.disconnect();
-          observer.observe(document.body, { childList: true, subtree: true });
-        }
+        if (getButton()) return;
+        removalWatcher.disconnect();
+        observer.observe(document.body, { childList: true, subtree: true });
       });
       removalWatcher.observe(document.body, { childList: true, subtree: true });
-    }
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-  tryInject();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
 
+  window.addEventListener('beforeunload', (event) => {
+    if (!isRunning) return;
+    event.preventDefault();
+    event.returnValue = '';
+    return '';
+  });
+
+  watchForButton();
+  tryInject();
 })();

@@ -269,24 +269,23 @@
     return deleted;
   }
 
-  async function emptyTrash(spaceId, userId) {
+  async function emptyTrash(spaceId, userId, firstPage) {
     const skipped = new Set();
     let deleted = 0;
-    let from = 0;
+    let nextPage = firstPage;
 
     while (true) {
-      const page = await fetchTrashedPage(spaceId, from);
-      if (page.length === 0) break;
+      if (nextPage.length === 0) break;
 
-      const ids = page.filter((id) => !skipped.has(id));
+      const ids = nextPage.filter((id) => !skipped.has(id));
       if (ids.length === 0) {
-        if (page.length < SEARCH_PAGE_SIZE) break;
-        from += page.length;
+        if (nextPage.length < SEARCH_PAGE_SIZE) break;
+        nextPage = await fetchTrashedPage(spaceId, nextPage.length);
         continue;
       }
 
       deleted += await deletePage(ids, spaceId, userId, skipped);
-      from = 0;
+      nextPage = await fetchTrashedPage(spaceId, 0);
     }
 
     return deleted;
@@ -314,7 +313,7 @@
       if (!confirm(tr('confirmDelete'))) return;
 
       setLoading(btn, true);
-      const deleted = await emptyTrash(spaceId, userId);
+      const deleted = await emptyTrash(spaceId, userId, firstPage);
 
       toast(deleted === 1 ? tr('oneItemDeleted') : tr('manyItemsDeleted', String(deleted)), false, true);
     } catch (error) {

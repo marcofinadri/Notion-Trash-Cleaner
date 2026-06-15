@@ -2,7 +2,7 @@
 
 A Chrome extension that permanently deletes all pages in your Notion trash with a single click — no manual scrolling, no "Delete all" button that Notion doesn't provide.
 
-![License](https://img.shields.io/github/license/marcofugaro/Notion-Trash-Cleaner)
+![License](https://img.shields.io/github/license/marcofinadri/Notion-Trash-Cleaner)
 
 ---
 
@@ -10,7 +10,6 @@ A Chrome extension that permanently deletes all pages in your Notion trash with 
 
 - Injects an **"Empty trash"** button directly into Notion's trash filter bar
 - Handles **any number of trashed items** (paginated, not capped at 1000)
-- Shows a live deletion counter while working
 - Confirmation dialog before any destructive action
 - Matches Notion's native UI style (dark/light mode aware via CSS variables)
 
@@ -20,11 +19,11 @@ A Chrome extension that permanently deletes all pages in your Notion trash with 
 
 ## Installation
 
-The extension is not yet on the Chrome Web Store. Load it manually:
+**Install from the Chrome Web Store** *(review pending)* or load it manually:
 
 1. Clone or download this repository
    ```
-   git clone https://github.com/marcofugaro/Notion-Trash-Cleaner.git
+   git clone https://github.com/marcofinadri/Notion-Trash-Cleaner.git
    ```
 2. Open Chrome and navigate to `chrome://extensions`
 3. Enable **Developer mode** (top-right toggle)

@@ -8,14 +8,14 @@ Notion Trash Cleaner does not collect, store, transmit, or share any user data.
 
 ## How it works
 
-The extension runs entirely in your browser. It communicates only with `app.notion.com` using your existing logged-in session cookies — the same requests your browser already makes when you use Notion normally. No data is sent to any server other than Notion's own.
+The extension runs entirely in your browser. It communicates only with `app.notion.com` and `*.notion.so` using your existing logged-in session cookies — the same requests your browser already makes when you use Notion normally. No data is sent to any server other than Notion's own.
 
 ## Permissions
 
 | Permission | Why it's needed |
 |---|---|
 | `activeTab` + `scripting` | To inject the "Empty trash" button into the Notion interface |
-| `app.notion.com` host access | To call Notion's internal API on your behalf to delete trashed pages |
+| `app.notion.com` + `*.notion.so` host access | To call Notion's internal API on your behalf to delete trashed pages |
 
 ## Data collection
 

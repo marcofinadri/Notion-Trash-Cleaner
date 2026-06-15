@@ -14,7 +14,7 @@
   const FG = 'var(--c-redTexAccPri, rgba(235,87,87,1))';
 
   const tr = (key, ...subs) => chrome.i18n.getMessage(key, subs) || key;
-  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const TRASH_SVG = `<svg aria-hidden="true" role="graphics-symbol" viewBox="0 0 16 16"
     style="width:14px;height:14px;fill:currentColor;flex-shrink:0;">
@@ -55,6 +55,7 @@
   `;
 
   let isRunning = false;
+  let abortController = null;
 
   const getButton = () => document.getElementById(BUTTON_ID);
 
@@ -188,6 +189,7 @@
           credentials: 'include',
           headers,
           body: JSON.stringify(body),
+          signal: abortController?.signal,
         });
         if (resp.ok) return resp.json();
         if (resp.status !== 429 && resp.status < 500) {
@@ -195,9 +197,10 @@
         }
         lastError = new Error(`${path} transient: ${resp.status}`);
       } catch (error) {
+        if (error.name === 'AbortError') throw error;
         lastError = error;
       }
-      if (attempt < MAX_RETRIES) await delay(RETRY_BASE_DELAY * 2 ** attempt);
+      if (attempt < MAX_RETRIES) await sleep(RETRY_BASE_DELAY * 2 ** attempt);
     }
     throw lastError;
   }
@@ -249,6 +252,7 @@
       );
       return ids.length;
     } catch (error) {
+      if (error.name === 'AbortError') throw error;
       if (ids.length === 1) {
         skipped.add(ids[0]);
         console.warn('[Notion Trash Cleaner] skipping undeletable block', ids[0], error);
@@ -297,6 +301,7 @@
     if (!btn) return;
 
     isRunning = true;
+    abortController = new AbortController();
     setLoading(btn, true);
 
     try {
@@ -315,12 +320,17 @@
       setLoading(btn, true);
       const deleted = await emptyTrash(spaceId, userId, firstPage);
 
-      toast(deleted === 1 ? tr('oneItemDeleted') : tr('manyItemsDeleted', String(deleted)), false, true);
+      const msg = deleted === 1 ? tr('oneItemDeleted') : tr('manyItemsDeleted', String(deleted));
+      toast(msg, false, true);
+      chrome.runtime.sendMessage({ type: 'ntc-notify', message: msg }).catch(() => {});
     } catch (error) {
-      toast(tr('errorMsg'), true);
-      console.error('[Notion Trash Cleaner]', error);
+      if (error.name !== 'AbortError') {
+        toast(tr('errorMsg'), true);
+        console.error('[Notion Trash Cleaner]', error);
+      }
     } finally {
       isRunning = false;
+      abortController = null;
       const current = getButton();
       if (current) setLoading(current, false);
     }
@@ -379,20 +389,22 @@
   function watchForButton() {
     const observer = new MutationObserver(() => {
       tryInject();
-      if (!getButton()) return;
+      const btn = getButton();
+      if (!btn) return;
       observer.disconnect();
       const removalWatcher = new MutationObserver(() => {
         if (getButton()) return;
         removalWatcher.disconnect();
-        observer.observe(document.body, { childList: true, subtree: true });
+        watchForButton();
       });
-      removalWatcher.observe(document.body, { childList: true, subtree: true });
+      removalWatcher.observe(btn.parentElement ?? document.body, { childList: true });
     });
     observer.observe(document.body, { childList: true, subtree: true });
   }
 
   window.addEventListener('beforeunload', (event) => {
     if (!isRunning) return;
+    abortController?.abort('page-unload');
     event.preventDefault();
     event.returnValue = '';
     return '';

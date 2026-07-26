@@ -205,13 +205,28 @@
     throw lastError;
   }
 
+  // Resolves the spaceId of the workspace currently open in this tab. Notion's
+  // loadUserContent response includes every workspace the account belongs to, in no
+  // particular order, so we can't just take the first one — we have to match it against
+  // the space the user actually has open (tracked via the space_view Notion routes through).
+  function getCurrentSpaceId(recordMap) {
+    try {
+      const raw = localStorage.getItem('LRU:KeyValueStore2:lastVisitedRouteSpaceViewId');
+      const spaceViewId = raw && JSON.parse(raw).value;
+      const spaceId = spaceViewId && recordMap.space_view?.[spaceViewId]?.value?.value?.space_id;
+      if (spaceId && recordMap.space[spaceId]) return spaceId;
+    } catch (e) {}
+    return null;
+  }
+
   async function getSpaceAndUser() {
     const json = await apiFetch('loadUserContent', {});
     if (!json.recordMap?.space || !json.recordMap?.notion_user) {
       throw new Error('Unexpected loadUserContent response shape');
     }
+    const spaceId = getCurrentSpaceId(json.recordMap) || Object.keys(json.recordMap.space)[0];
     return {
-      spaceId: Object.keys(json.recordMap.space)[0],
+      spaceId,
       userId: Object.keys(json.recordMap.notion_user)[0],
     };
   }

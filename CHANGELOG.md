@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2026-07-26
+
+### Fixed
+- `getSpaceAndUser()` no longer picks the first workspace returned by `loadUserContent` (arbitrary, unrelated to what's open) — it now resolves the space actually open in the current tab via `lastVisitedRouteSpaceViewId` (kept live in `localStorage` by Notion itself), falling back to the old behavior only if that lookup fails. Fixes the extension emptying the trash of the wrong workspace for accounts with more than one Notion space.
+
 ## [1.0.9] - 2026-06-15
 
 ### Added
